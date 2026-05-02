@@ -1,0 +1,26 @@
+Name: Krish Murthi S j
+Email: krishnamurthisj3@example.com
+Phone: 6363216950
+GitHub: https://github.com/krishnamurthisj / [text](https://github.com/krishnamurthisj/Attendance-Management-System)
+
+Challenge: Implementing authentication and database flow
+1.Role-Based Access Control (RBAC) Design
+
+Implementing multiple user roles (student, trainer, institution, programme manager, monitoring officer) with different permissions was complex. Ensuring every endpoint correctly enforced server-side authorization required careful dependency design in FastAPI.
+
+2.JWT Authentication with Role Embedding
+
+Designing JWT tokens that securely carried user_id, role, iat, and exp required careful handling to prevent unauthorized access. Managing token validation across multiple endpoints added additional complexity.
+
+3.Database Relationship Modeling
+
+Structuring relational entities like:
+
+batch_trainers (many-to-many)
+batch_students
+batch_invites with expiry and usage tracking
+required careful schema planning to maintain consistency and avoid data duplication.
+
+4.API Consistency and Swagger Validation Issues
+
+Ensuring all request schemas correctly matched FastAPI validation rules helped eliminate recurring 422 errors during development.
