@@ -5,9 +5,9 @@ from jose import jwt
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 
-# =====================
+
 # DATABASE SETUP
-# =====================
+
 DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(
@@ -18,9 +18,9 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
-# =====================
+
 # MODELS
-# =====================
+
 class User(Base):
     __tablename__ = "users"
 
@@ -59,14 +59,14 @@ class Attendance(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# =====================
-# APP
-# =====================
+
+# ---APP---
+
 app = FastAPI()
 
-# =====================
-# DB DEPENDENCY
-# =====================
+
+# --DB DEPENDENCY--
+
 def get_db():
     db = SessionLocal()
     try:
@@ -74,9 +74,8 @@ def get_db():
     finally:
         db.close()
 
-# =====================
-# JWT
-# =====================
+# --JWT--
+
 SECRET_KEY = "secret"
 ALGORITHM = "HS256"
 
@@ -88,9 +87,8 @@ def create_token(user_id, role):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-# =====================
-# REQUEST SCHEMAS
-# =====================
+# --REQUEST SCHEMAS--
+
 class SignupSchema(BaseModel):
     name: str
     email: str
@@ -119,9 +117,8 @@ class AttendanceSchema(BaseModel):
     student_id: int
     status: str
 
-# =====================
-# RESPONSE SCHEMAS
-# =====================
+# -- RESPONSE SCHEMAS--
+
 class UserOut(BaseModel):
     id: int
     name: str
@@ -160,16 +157,14 @@ class AttendanceOut(BaseModel):
     class Config:
         from_attributes = True
 
-# =====================
-# HOME
-# =====================
+# --HOME--
+
 @app.get("/")
 def home():
     return {"message": "API running"}
 
-# =====================
-# AUTH
-# =====================
+# ---AUTH---
+
 @app.post("/auth/signup", response_model=dict)
 def signup(data: SignupSchema, db: Session = Depends(get_db)):
     user = User(**data.dict())
@@ -188,9 +183,8 @@ def login(data: LoginSchema, db: Session = Depends(get_db)):
     token = create_token(user.id, user.role)
     return {"token": token}
 
-# =====================
-# BATCH
-# =====================
+# BATCH---
+
 @app.post("/batches", response_model=dict)
 def create_batch(data: BatchSchema, db: Session = Depends(get_db)):
     batch = Batch(**data.dict())
@@ -203,9 +197,8 @@ def create_batch(data: BatchSchema, db: Session = Depends(get_db)):
 def get_batches(db: Session = Depends(get_db)):
     return db.query(Batch).all()
 
-# =====================
-# SESSION
-# =====================
+# SESSION---
+
 @app.post("/sessions", response_model=dict)
 def create_session(data: SessionSchema, db: Session = Depends(get_db)):
 
@@ -223,9 +216,8 @@ def create_session(data: SessionSchema, db: Session = Depends(get_db)):
 def get_sessions(db: Session = Depends(get_db)):
     return db.query(SessionModel).all()
 
-# =====================
-# ATTENDANCE
-# =====================
+# ATTENDANCE---
+
 @app.post("/attendance", response_model=dict)
 def mark_attendance(data: AttendanceSchema, db: Session = Depends(get_db)):
 
@@ -241,4 +233,4 @@ def mark_attendance(data: AttendanceSchema, db: Session = Depends(get_db)):
 
 @app.get("/attendance", response_model=list[AttendanceOut])
 def get_attendance(db: Session = Depends(get_db)):
-    return db.query(Attendance).all()
+    return db.query(Attendance).all() 

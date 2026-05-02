@@ -1,21 +1,21 @@
 from jose import jwt
 from datetime import datetime, timedelta
-from fastapi import HTTPException
+from passlib.context import CryptContext
 
-SECRET_KEY = "secret"
-ALGORITHM = "HS256"
+SECRET = "secret"
+ALGO = "HS256"
 
-def create_token(user_id, role):
-    payload = {
-        "user_id": user_id,
-        "role": role,
+pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(p):
+    return pwd.hash(p)
+
+def verify_password(p, h):
+    return pwd.verify(p, h)
+
+def create_token(user):
+    return jwt.encode({
+        "user_id": user.id,
+        "role": user.role,
         "exp": datetime.utcnow() + timedelta(hours=24)
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def get_current_user(token: str):
-    try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    }, SECRET, algorithm=ALGO)
